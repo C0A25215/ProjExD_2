@@ -2,6 +2,7 @@ import os
 import random
 import sys
 import pygame as pg
+import time
 
 
 WIDTH, HEIGHT = 1100, 650
@@ -28,6 +29,22 @@ def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+def gameover(screen: pg.Surface) -> None: #追加機能1ゲームオーバー画面
+    bk_scr = pg.Surface((1200, 650))            #黒い矩形を描画するための空のSurface作成
+    bk_scr.set_alpha(200)                       #透明度設定
+
+    gotxtfont = pg.font.Font(None, 80)          #フォント設定
+    gotxt = gotxtfont.render("Game Over", True, (255, 255, 255))    #白文字でGame Over
+    bk_scr.blit(gotxt, [400, 250])              #Game Overを黒背景にblit
+    you_died_kk = pg.image.load("fig/0.png")    #こうかとんの画像をロード
+    bk_scr.blit(you_died_kk, [350, 250])        #こうかとん左を黒背景にblit
+    bk_scr.blit(you_died_kk, [700, 250])        #こうかとん右を黒背景にblit
+
+    screen.blit(bk_scr, [0, 0])                 #黒背景をScreen Surfaceにblit
+    pg.display.update()                         #pg.display.update()
+    time.sleep(5)                               #5秒待機
+    return
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -53,6 +70,7 @@ def main():
 
         if kk_rct.colliderect(bb_rct): # kkとbbのrectが重なっていたら
             print("GAME OVER")
+            gameover(screen)
             return
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -70,6 +88,7 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += tpl[0]  # 横方向移動量
                 sum_mv[1] += tpl[1]  # 縦方向移動量
+                
 
         bb_rct.move_ip(vx, vy)  # 練習2：爆弾動く
 
