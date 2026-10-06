@@ -21,13 +21,31 @@ def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
     画面内ならTrue / 画面外ならFalse
     """
 
-
     yoko, tate = True, True
     if rect.left < 0 or WIDTH < rect.right:
         yoko = False
     if rect.top < 0 or HEIGHT < rect.bottom:
         tate = False
     return yoko, tate
+
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1.0)
+
+    
+
+    kk_dict = {
+        ( 0,  0): pg.transform.rotozoom(kk_img, 0, 1.0),                                        #押下なし左向き
+        (-5,  5): pg.transform.rotozoom(kk_img, 45, 1.0),                                       #左下
+        (-5,  0): pg.transform.rotozoom(kk_img, 0, 1.0),                                        #左
+        (-5, -5): pg.transform.rotozoom(kk_img, -45, 1.0),                                      #左上
+        ( 0, -5): pg.transform.rotozoom(pg.transform.flip(kk_img, False, True), -90, 1.0),      #上
+        ( 5, -5): pg.transform.rotozoom(pg.transform.flip(kk_img, False, True), -135, 1.0),     #右上
+        ( 5,  0): pg.transform.rotozoom(pg.transform.flip(kk_img, False, True), 180, 1.0),      #右
+        ( 5,  5): pg.transform.rotozoom(pg.transform.flip(kk_img, False, True), 135, 1.0),      #右下  
+        ( 0,  5): pg.transform.rotozoom(pg.transform.flip(kk_img, False, True), 90, 1.0),       #下
+    }
+    return kk_dict
+kk_imgs = get_kk_imgs()
 
 def gameover(screen: pg.Surface) -> None: #追加機能1ゲームオーバー画面
     bk_scr = pg.Surface((1200, 650))            #黒い矩形を描画するための空のSurface作成
@@ -62,6 +80,8 @@ def main():
     vx, vy = +5, +5  # 練習2：爆弾の初期速度
     clock = pg.time.Clock()
     tmr = 0
+
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -91,6 +111,8 @@ def main():
                 
 
         bb_rct.move_ip(vx, vy)  # 練習2：爆弾動く
+
+        kk_img = kk_imgs[tuple(sum_mv)]
 
         yoko, tate = check_bound(bb_rct)
         if not yoko: #yoko == False
